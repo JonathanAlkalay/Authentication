@@ -33,5 +33,21 @@ services:
       - MYSQL_USER=user
       - MYSQL_PASSWORD=secret
       - MYSQL_ROOT_HOST=%
+
+  authentication_sql:
+    image: mysql:latest
+    container_name: authentication_sql
+    ports:
+      - "3307:3306"
+    command: --init-file /data/application/init.auth.sql
+    volumes:
+      - ../authentication/init.auth.sql:/data/application/init.auth.sql
+    environment:
+      - MYSQL_ROOT_USER=root
+      - MYSQL_ROOT_PASSWORD=secret
+      - MYSQL_DATABASE=authentication
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=secret
+      - MYSQL_ROOT_HOST=%    
 volumes:
   my-datavolume:
