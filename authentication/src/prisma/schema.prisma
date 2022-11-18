@@ -11,19 +11,19 @@ datasource db {
 }
 
 model Users {
-  id            String          @id
+  id            String          @id @default(uuid())
   email         String
   password      String
-  RefreshTokens RefreshTokens[]
+  refreshTokens RefreshTokens[]
 
   @@map("users")
 }
 
 model RefreshTokens {
-  id           String  @id
+  id           String  @id @default(uuid())
   userId       String
-  refreshToken String
-  isActive     Boolean
+  token        String
+  isActive     Boolean @default(false)
 
   user Users @relation(fields: [userId], references: [id])
 
