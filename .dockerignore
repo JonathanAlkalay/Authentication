@@ -1,4 +1,8 @@
 **/node_mudules
+.git
 
 client/build
 backend/dist
+authentication/dist
+
+authentication/init.auth.sql

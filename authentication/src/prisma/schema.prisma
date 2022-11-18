@@ -23,7 +23,7 @@ model RefreshTokens {
   id           String  @id @default(uuid())
   userId       String
   token        String
-  isActive     Boolean @default(false)
+  isActive     Boolean @default(true)
 
   user Users @relation(fields: [userId], references: [id])
 
