@@ -7,5 +7,8 @@ export {
 export {
     JwtTokens,
     LoginInfoDTO,
-    AuthenticatedUser
+    AuthenticatedUser,
+    CreateUserDTO,
+    AlterRolesDto,
+    Role
 } from './Authentication'

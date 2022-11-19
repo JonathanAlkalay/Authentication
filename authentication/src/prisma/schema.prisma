@@ -11,21 +11,38 @@ datasource db {
 }
 
 model Users {
-  id            String          @id @default(uuid())
-  email         String
-  password      String
+  id       String @id @default(uuid())
+  email    String
+  password String
+
+  roles         Roles[]
   refreshTokens RefreshTokens[]
 
   @@map("users")
 }
 
+model Roles {
+  id     String @id @default(uuid())
+  userId String
+  role   Role
+
+  user Users @relation(fields: [userId], references: [id])
+
+  @@map("roles")
+}
+
 model RefreshTokens {
-  id           String  @id @default(uuid())
-  userId       String
-  token        String
-  isActive     Boolean @default(true)
+  id       String  @id @default(uuid())
+  userId   String
+  token    String
+  isActive Boolean @default(true)
 
   user Users @relation(fields: [userId], references: [id])
 
   @@map("refreshTokens")
+}
+
+enum Role {
+  ADMIN
+  USER
 }

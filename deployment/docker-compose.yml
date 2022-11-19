@@ -18,20 +18,20 @@ services:
   #     - "3000:80"
 
 
-  authentication:
-    image: employee_management_authentication:0.01
-    container_name: em_authentication
-    ports:
-      - "443:443"
-    environment:
-      - JWT_ACCESS_TOKEN_SECRET=iAmLordVoldemort
-      - JWT_ACCESS_TOKEN_EXPIRATION_TIME=1h
-      - JWT_REFRESH_TOKEN_SECRET=tomRiddle
-      - JWT_REFRESH_TOKEN_EXPIRATION_TIME=1d
-      - DATABASE_URL=mysql://user:secret@authentication_sql:3306/authentication
-    depends_on:
-      authentication_sql:
-        condition: service_healthy
+  # authentication:
+  #   image: employee_management_authentication:0.01
+  #   container_name: em_authentication
+  #   ports:
+  #     - "443:443"
+  #   environment:
+  #     - JWT_ACCESS_TOKEN_SECRET=iAmLordVoldemort
+  #     - JWT_ACCESS_TOKEN_EXPIRATION_TIME=1h
+  #     - JWT_REFRESH_TOKEN_SECRET=tomRiddle
+  #     - JWT_REFRESH_TOKEN_EXPIRATION_TIME=1d
+  #     - DATABASE_URL=mysql://user:secret@authentication_sql:3306/authentication
+  #   depends_on:
+  #     authentication_sql:
+  #       condition: service_healthy
 
   # mysql:
   #   image: mysql:latest
@@ -58,6 +58,7 @@ services:
     command: --init-file /data/application/init.auth.sql
     volumes:
       - ../authentication/init.auth.sql:/data/application/init.auth.sql
+      - auth-db-data-volume:/var/lib/mysql
     environment:
       - MYSQL_ROOT_USER=root
       - MYSQL_ROOT_PASSWORD=secret
@@ -71,3 +72,5 @@ services:
       retries: 10  
 volumes:
   my-datavolume:
+  auth-db-data-volume:
+    external: true

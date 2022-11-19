@@ -11,7 +11,19 @@ CREATE Table users(
     password    TEXT         NOT NULL,
 
     PRIMARY KEY(id),
+
     INDEX(email(80), password(50))
+);
+
+CREATE TABLE roles(
+    id          VARCHAR(255) NOT NULL,
+    userId      VARCHAR(255) NOT NULL,
+    role        TEXT,
+
+    PRIMARY KEY(id),
+    FOREIGN KEY(userId) REFERENCES users(id),
+
+    INDEX(role(50))
 );
 
 CREATE Table refreshTokens(
@@ -22,7 +34,8 @@ CREATE Table refreshTokens(
     
     PRIMARY KEY(id),
     FOREIGN KEY(userId) REFERENCES users(id),
-    INDEX(token(750))
+
+    INDEX(token(750), isActive)
 );
 
 INSERT INTO users(id, email, password)
