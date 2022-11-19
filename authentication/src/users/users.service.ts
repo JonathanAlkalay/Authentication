@@ -1,13 +1,22 @@
 import { Injectable } from '@nestjs/common';
 import { Users } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
-
+import { comparePasswordToHash } from '../utils/password-hash';
 @Injectable()
 export class UsersService {
     constructor(private prismaService: PrismaService) {}
 
     async findByEmailAndPassword(email: string, password: string): Promise<Users> {
-        return await this.prismaService.users.findFirst({ where: { email, password } });
+
+        const user = await this.prismaService.users.findFirst({ where: { email } });
+
+        const isPasswordValid = await comparePasswordToHash(password, user?.password);
+
+        if(!user || !isPasswordValid){
+            return null;
+        }
+
+        return user;
     }
 
     async findById(id: string): Promise< Users & { refreshTokens: { token: string }[] }> {

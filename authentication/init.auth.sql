@@ -11,7 +11,7 @@ CREATE Table users(
     password    TEXT         NOT NULL,
 
     PRIMARY KEY(id),
-
+    UNIQUE(email(80)),
     INDEX(email(80), password(50))
 );
 

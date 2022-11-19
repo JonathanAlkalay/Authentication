@@ -1,13 +1,25 @@
-import { Injectable } from '@nestjs/common';
-import { Role, Roles, Users } from '@prisma/client';
+import { ImATeapotException, Injectable } from '@nestjs/common';
+import { Prisma, Role, Roles, Users } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { hashPassword } from '../utils/password-hash';
 
 @Injectable()
 export class AdminsService {
     constructor(private prismaService: PrismaService) { }
 
     async createUser(email: string, password: string): Promise<Users> {
-        return await this.prismaService.users.create({ data: { email, password } })
+        
+        const hashedPassword = await hashPassword(password);
+        try{
+            return await this.prismaService.users.create({ data: { email, password: hashedPassword } })
+        }catch (e) {
+            if (e instanceof Prisma.PrismaClientKnownRequestError) {
+              if (e.code === 'P2002') {
+                console.debug('There is a unique constraint violation, a new user cannot be created with this email')
+              }
+            }
+            throw new ImATeapotException('email already exists')
+        }
     }
 
     async deleteUser(id: string): Promise<void> {
