@@ -1,3 +1,4 @@
 window.env = {
-    REACT_APP_BASE_URL: "http://localhost:8080/"
+    BACKEND_BASE_URL: "http://localhost:8080/",
+    AUTH_BASE_URL: "http://localhost:443/",
 }
