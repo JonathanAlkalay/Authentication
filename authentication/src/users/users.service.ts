@@ -1,10 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { Users } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { comparePasswordToHash } from '../utils/password-hash';
 @Injectable()
 export class UsersService {
-    constructor(private prismaService: PrismaService) {}
+    private readonly logger: Logger;
+    constructor(private prismaService: PrismaService) {
+        this.logger = new Logger('UsersService', {timestamp: true});
+    }
 
     async findByEmailAndPassword(email: string, password: string): Promise<Users> {
 
@@ -13,9 +16,12 @@ export class UsersService {
         const isPasswordValid = await comparePasswordToHash(password, user?.password);
 
         if(!user || !isPasswordValid){
+
+            this.logger.debug(`user does not exit or credentials are wrong for email: ${email} password:${password}`)
+
             return null;
         }
-
+        
         return user;
     }
 
@@ -39,6 +45,8 @@ export class UsersService {
             where: { id: userId },
             data: { refreshTokens: { createMany: { data: { token } } } }
         })
+
+        this.logger.log(`updated user ${userId} refresh token: ${token}`)
     }
 
     async deActivateRefreshToken(userId: string): Promise<void> {

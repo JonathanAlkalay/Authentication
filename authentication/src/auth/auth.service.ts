@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { ForbiddenException, Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { AuthenticatedUser, JwtTokens } from 'commonDataModel';
@@ -6,7 +6,10 @@ import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class AuthService {
-    constructor(private userService: UsersService, private jwtService: JwtService, private configService: ConfigService) { }
+    private logger: Logger;
+    constructor(private userService: UsersService, private jwtService: JwtService, private configService: ConfigService) {
+        this.logger = new Logger('AuthService', { timestamp: true });
+    }
 
     async login(email: string, password: string): Promise<JwtTokens> {
 
@@ -15,7 +18,10 @@ export class AuthService {
     }
 
     async logout(userId: string): Promise<void> {
-        return await this.userService.deActivateRefreshToken(userId);
+
+        await this.userService.deActivateRefreshToken(userId);
+        
+        this.logger.log(`logged out user: ${userId} and removed active refresh token`);
     }
 
     async validateUser(email: string, password: string): Promise<AuthenticatedUser> {
@@ -37,6 +43,8 @@ export class AuthService {
         const user = await this.userService.findById(userId);
 
         if( !user || user.refreshTokens.length === 0 || ( refreshToken !== user.refreshTokens[0].token)){
+
+            this.logger.debug(`user ${userId} does not exist or does not have a valid refresh token`);
             throw new ForbiddenException('Access denied');
         }
 
@@ -58,6 +66,7 @@ export class AuthService {
             }),
         }
         this.userService.updateRefreshToken(tokens.refreshToken, userId);
+
         return tokens;
     }
 }
