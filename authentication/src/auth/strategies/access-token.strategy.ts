@@ -15,7 +15,7 @@ export class AccessTokenStrategy extends PassportStrategy(Strategy) {
         })
     }
 
-    async validate({ sub, email }: DecryptedAccessToken): Promise<AuthenticatedUser> {
-        return { id: sub, email }
+    async validate({ sub, email, roles }: DecryptedAccessToken): Promise<AuthenticatedUser> {
+        return { id: sub, email, roles }
     }
 }

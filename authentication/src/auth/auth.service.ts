@@ -1,6 +1,7 @@
 import { ForbiddenException, Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
+import { Role } from '@prisma/client';
 import { AuthenticatedUser, JwtTokens } from 'commonDataModel';
 import { UsersService } from 'src/users/users.service';
 
@@ -13,8 +14,8 @@ export class AuthService {
 
     async login(email: string, password: string): Promise<JwtTokens> {
 
-        const { id, email: userEmail} = await this.validateUser(email, password);
-        return this.generateTokens(id, userEmail);
+        const { id, email: userEmail, roles } = await this.validateUser(email, password);
+        return this.generateTokens(id, userEmail, roles);
     }
 
     async logout(userId: string): Promise<void> {
@@ -34,7 +35,9 @@ export class AuthService {
 
         { 
             const { password, ...restOfProps} = user
-            return restOfProps;
+            
+            const roles = restOfProps.roles.map(r => r.role);
+            return {...restOfProps, roles};
         }
     }
 
@@ -48,12 +51,14 @@ export class AuthService {
             throw new ForbiddenException('Access denied');
         }
 
-        return this.generateTokens(userId, user.email);
+        const { email, roles } = user;
+
+        return this.generateTokens(userId, email, roles.map(r => r.role));
     }
 
-    generateTokens(userId: string, email: string): JwtTokens {
+    generateTokens(userId: string, email: string, roles: Role[]): JwtTokens {
         
-        const payload = { email, sub: userId};
+        const payload = { email, sub: userId, roles};
 
         const tokens: JwtTokens = {
             accessToken: this.jwtService.sign(payload, {

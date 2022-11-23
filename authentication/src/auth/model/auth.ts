@@ -1,3 +1,4 @@
+import { Role } from "commonDataModel";
 
 export interface ExtractedRefreshToken {
     userId: string;
@@ -6,6 +7,7 @@ export interface ExtractedRefreshToken {
 
 export interface DecryptedAccessToken {
     email: string;
+    roles: Role[];
     sub: string;
     iat: number;
     exp: number;

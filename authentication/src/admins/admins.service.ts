@@ -34,8 +34,17 @@ export class AdminsService {
 
     async deleteUser(id: string): Promise<void> {
         
-        await this.prismaService.users.delete({ where: { id } });
+        const nestedDeletes = this.prismaService.users.update({
+            where: { id },
+            data: {
+                roles: { deleteMany: { userId: id } },
+                refreshTokens: { deleteMany: { userId: id } }
+            }
+        })
+        const topLevelDelete = this.prismaService.users.delete({ where: { id } });
 
+        await this.prismaService.$transaction([nestedDeletes, topLevelDelete]);
+        
         this.logger.log(`user ${id} was deleted`)
     }
 

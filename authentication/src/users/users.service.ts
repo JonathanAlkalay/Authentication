@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { Users } from '@prisma/client';
+import { Roles, Users } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { comparePasswordToHash } from '../utils/password-hash';
 @Injectable()
@@ -9,9 +9,12 @@ export class UsersService {
         this.logger = new Logger('UsersService', {timestamp: true});
     }
 
-    async findByEmailAndPassword(email: string, password: string): Promise<Users> {
+    async findByEmailAndPassword(email: string, password: string): Promise<Users & { roles: Roles[]}> {
 
-        const user = await this.prismaService.users.findFirst({ where: { email } });
+        const user = await this.prismaService.users.findFirst({
+            where: { email },
+            include: { roles: true } 
+        });
 
         const isPasswordValid = await comparePasswordToHash(password, user?.password);
 
@@ -25,14 +28,15 @@ export class UsersService {
         return user;
     }
 
-    async findById(id: string): Promise< Users & { refreshTokens: { token: string }[] }> {
+    async findById(id: string): Promise<Users & { refreshTokens: { token: string; }[]; roles: Roles[]}> {
         return this.prismaService.users.findUnique({
             where: { id },
             include: {
                 refreshTokens: {
                     where: { isActive: true},
                     select: { token: true }
-                }
+                },
+                roles: true
             }
         });
     }

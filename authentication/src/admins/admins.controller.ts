@@ -1,9 +1,11 @@
 import { Body, Controller, Delete, Param, Post } from '@nestjs/common';
 import { Roles, Users } from '@prisma/client';
 import { AlterRolesDto, CreateUserDTO } from 'commonDataModel';
+import { RequiresRoles } from 'src/utils/custom-decorators';
 import { AdminsService } from './admins.service';
 
 @Controller('admins')
+@RequiresRoles('ADMIN')
 export class AdminsController {
 
     constructor(private adminService: AdminsService) { }

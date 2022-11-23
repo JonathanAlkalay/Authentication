@@ -19,7 +19,7 @@ services:
 
 
   authentication:
-    image: employee_management_authentication:0.01
+    image: employee_management_authentication:0.02
     container_name: em_authentication
     ports:
       - "443:443"

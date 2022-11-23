@@ -1,4 +1,4 @@
-VERSION=0.01
+VERSION=0.02
 IMAGE_NAME=employee_management_authentication
 
 FULL_IMAGE_NAME=${IMAGE_NAME}:${VERSION}
