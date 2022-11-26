@@ -3,7 +3,7 @@ import { Shell } from './app-state/Shell';
 import { createStore } from './app-state/Store';
 import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider } from '@emotion/react';
-import {Theme} from "./common/components/toolkit/Theme";
+import {Theme} from "./common/Theme";
 
 
 const store = createStore();
@@ -13,7 +13,7 @@ const App = () => {
     <Provider store={store}>
       <CssBaseline />
       <ThemeProvider theme={Theme}>
-      <Shell/>
+        <Shell/>
       </ThemeProvider>
     </Provider>
   )

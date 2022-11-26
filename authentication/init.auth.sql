@@ -1,4 +1,4 @@
--- Active: 1668637672591@@127.0.0.1@3306@authentication
+-- Active: 1668766747113@@127.0.0.1@3307@authentication
 DROP DATABASE if EXISTS authentication;
 
 CREATE DATABASE authentication;
@@ -38,5 +38,25 @@ CREATE Table refreshTokens(
     INDEX(token(750), isActive)
 );
 
+SET @userId = UUID();
+
 INSERT INTO users(id, email, password)
-VALUES ('1', 'darth', 'vader');
+VALUES (
+    @userId, 
+    'darth', 
+    '$2b$15$UogetO6Q3.sa3fb5YeU/seapG666.hXxTzGrkVD37jye3J93hvEQK'
+);
+
+INSERT INTO roles(id, userId, role)
+VALUES (
+    UUID(),
+    @userId,
+    'USER'
+);
+
+INSERT INTO roles(id, userId, role)
+VALUES (
+    UUID(),
+    @userId,
+    'ADMIN'
+);

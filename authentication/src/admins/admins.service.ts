@@ -1,21 +1,31 @@
-import { ImATeapotException, Injectable } from '@nestjs/common';
+import { ImATeapotException, Injectable, Logger } from '@nestjs/common';
 import { Prisma, Role, Roles, Users } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { hashPassword } from '../utils/password-hash';
 
 @Injectable()
 export class AdminsService {
-    constructor(private prismaService: PrismaService) { }
+    private readonly logger: Logger
+
+    constructor(private prismaService: PrismaService) { 
+
+        this.logger = new Logger('AdminsService', { timestamp: true }) 
+    }
 
     async createUser(email: string, password: string): Promise<Users> {
-        
+
         const hashedPassword = await hashPassword(password);
+
         try{
-            return await this.prismaService.users.create({ data: { email, password: hashedPassword } })
+            const user = await this.prismaService.users.create({ data: { email, password: hashedPassword } });
+
+            this.logger.log(`created new user ${user.id}`);
+
+            return user;
         }catch (e) {
             if (e instanceof Prisma.PrismaClientKnownRequestError) {
               if (e.code === 'P2002') {
-                console.debug('There is a unique constraint violation, a new user cannot be created with this email')
+                this.logger.debug(`There is a unique constraint violation, a new user cannot be created with email: ${email}`)
               }
             }
             throw new ImATeapotException('email already exists')
@@ -23,11 +33,23 @@ export class AdminsService {
     }
 
     async deleteUser(id: string): Promise<void> {
-        await this.prismaService.users.delete({ where: { id } });
+        
+        const nestedDeletes = this.prismaService.users.update({
+            where: { id },
+            data: {
+                roles: { deleteMany: { userId: id } },
+                refreshTokens: { deleteMany: { userId: id } }
+            }
+        })
+        const topLevelDelete = this.prismaService.users.delete({ where: { id } });
+
+        await this.prismaService.$transaction([nestedDeletes, topLevelDelete]);
+        
+        this.logger.log(`user ${id} was deleted`)
     }
 
     async alterUserRoles(userId: string, roles: Role[]): Promise<{roles: Roles[]; id: string; email: string;}>{
-        return await this.prismaService.users.update({
+        const updatedUser =  await this.prismaService.users.update({
             where: { id: userId },
             data: {
                 roles: {
@@ -39,5 +61,9 @@ export class AdminsService {
             },
             select: { roles: true, email: true, id: true }
         })
+
+        this.logger.log(`user's ${userId} roles were changed to ${roles.map(r => `--${r}--`)}`);
+
+        return updatedUser;
     }
 }

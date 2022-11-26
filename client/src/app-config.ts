@@ -1,8 +1,12 @@
-
 interface appConfig {
-    baseUrl: string
+
+    backendBaseUrl: string,
+    authBaseUrl: string
 }
 
 export default {
-    baseUrl: window["env"].REACT_APP_BASE_URL
+    
+    backendBaseUrl: window["env"].BACKEND_BASE_URL,
+    authBaseUrl: window["env"].AUTH_BASE_URL
+
 } as appConfig
