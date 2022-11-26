@@ -1,7 +1,7 @@
 import { useLazyLoginQuery } from "../../app-state/api-slices/auth-api/UsersApiSlice";
 import { makeStyles } from "tss-react/mui";
 import { PrimaryButton } from "../../common/components/buttons/PrimaryButton";
-import { TextField, Typography } from "@mui/material";
+import { TextField } from "@mui/material";
 
 const useStyles = makeStyles()((theme) => ({
   root: {
@@ -14,7 +14,7 @@ const useStyles = makeStyles()((theme) => ({
   container: {
     height: "500px",
     width: "600px",
-    color: theme.palette.text.primary,
+    color: "#301934",
     h2: {
       textAlign: "center"
     }
