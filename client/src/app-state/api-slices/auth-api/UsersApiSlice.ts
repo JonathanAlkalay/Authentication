@@ -1,4 +1,4 @@
-import { JwtTokens, LoginInfoDTO } from "commonDataModel";
+import { JwtTokens, LoginInfoDTO } from "../../../../../common/src/model/Authentication";
 import  AuthApiSlice from "./RootApiSlice";
 
 
