@@ -1,8 +1,8 @@
 import { BaseButton } from "./BaseButton"
-
+import { Theme } from "../../../Theme";
 
 const style = {
-
+    backgroundColor: Theme.palette.primary.main
 }
 
 interface PrimaryButtonProps {

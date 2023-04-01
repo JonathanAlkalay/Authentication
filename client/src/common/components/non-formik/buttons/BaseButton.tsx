@@ -1,4 +1,4 @@
-import { SxProps } from '@mui/material';
+import { SxProps, Typography } from '@mui/material';
 import Button from '@mui/material/Button';
 
 const styles: SxProps = {
@@ -14,6 +14,8 @@ interface BaseButtonProps {
 }
 export const BaseButton = ({label, style, onClick, variant, disabled}: BaseButtonProps) => {
     return (
-        <Button disabled={disabled ?? false} variant={variant} sx={{...styles ,...style}} onClick={onClick}> { label } </Button>
+        <Button disabled={disabled ?? false} variant={variant} sx={{...styles ,...style}} onClick={onClick}>
+            <Typography color='textPrimary'> { label } </Typography>
+        </Button>
     )
 }

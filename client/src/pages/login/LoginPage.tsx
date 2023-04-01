@@ -1,10 +1,12 @@
 import { Typography } from "@mui/material";
 import { Formik } from "formik";
+import { useState } from "react";
 import { useLazyLoginQuery } from "../../app-state/api-slices/auth-api/UsersApiSlice"
 import { InputText } from "../../common/components/formik/TextInput";
 import { PrimaryButton } from "../../common/components/non-formik/buttons/PrimaryButton";
 import { SecondaryButton } from "../../common/components/non-formik/buttons/SecondaryButton";
 import { ComponentStyle } from "../../common/Theme";
+import { LoginErrorMessage } from "./LoginErrorMessage";
 
 
 const styles = {
@@ -33,6 +35,8 @@ const styles = {
 
 export const Login = () => {
   
+  const [ logginAttempted, setLoginAttempted ] = useState<boolean>(false);
+
   const [ login ] = useLazyLoginQuery();
 
   const handleSubmit = ({ email, password }: FormikState) =>{
@@ -42,10 +46,20 @@ export const Login = () => {
   return (
     <Formik<FormikState> enableReinitialize initialValues={{ email: '', password: '' }} onSubmit={handleSubmit}>
       {({ dirty, submitForm, resetForm }) => {
+
+        const onSubmit = () => {
+          submitForm();
+          setLoginAttempted(true);
+        }
+        
         return (
           <div style={styles.mainContainer}>
             
             <Typography> Welcome! Sign in to explore the app </Typography>
+
+            {
+              logginAttempted && <LoginErrorMessage/>
+            }
 
             <div style={styles.textInputContainer}>
               <InputText label="Email" name="email"/>
@@ -53,7 +67,7 @@ export const Login = () => {
             </div>
 
             <div style={styles.buttonContainer}>
-              <PrimaryButton disabled={!dirty} label="Submit" onClick={submitForm}/>
+              <PrimaryButton disabled={!dirty} label="Submit" onClick={onSubmit}/>
               <SecondaryButton disabled={!dirty} label="Reset" onClick={resetForm}/>
             </div>
 
