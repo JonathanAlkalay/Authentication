@@ -1,22 +1,11 @@
 
 services:
 
-  # backend:
-  #   image: employee_management_backend:0.01
-  #   container_name: em_backend
-  #   ports:
-  #     - "8080:8080"
-  #   environment:
-  #     - MYSQL_HOST=mysql  
-  #   depends_on:
-  #     - mysql
-
     # client:
   #   image: employee_management_client:0.01
   #   container_name: em_client
   #   ports:
   #     - "3000:80"
-
 
   authentication:
     image: employee_management_authentication:0.02
@@ -32,23 +21,6 @@ services:
     depends_on:
       authentication_sql:
         condition: service_healthy
-
-  # mysql:
-  #   image: mysql:latest
-  #   container_name: mysql
-  #   ports:
-  #     - "3306:3306"
-  #   command: --init-file /data/application/init.sql
-  #   volumes:
-  #     - ./init.sql:/data/application/init.sql
-  #     - my-datavolume:/var/lib/mysql
-  #   environment:
-  #     - MYSQL_ROOT_USER=root
-  #     - MYSQL_ROOT_PASSWORD=secret
-  #     - MYSQL_DATABASE=deathStar
-  #     - MYSQL_USER=user
-  #     - MYSQL_PASSWORD=secret
-  #     - MYSQL_ROOT_HOST=%
 
   authentication_sql:
     image: mysql:latest
